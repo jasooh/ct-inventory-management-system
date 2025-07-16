@@ -11,18 +11,18 @@ export default function PartGridView() {
     const [inventoryData, setInventoryData] = useState<Part[]>([]);
 
     // Retrieve data on render
-    // useEffect(() => {
-    //     setIsLoading(true);
-    //     console.log("DEBUG: Retrieving part data...")
-    //     fetch('/api/parts')
-    //         .then(res => {
-    //             if (!res.ok) throw new Error(`${res.status} ERROR: Unable to fetch parts`);
-    //             return res.json() as Promise<Part[]>
-    //         })
-    //         .then(data => setInventoryData(data))
-    //         .catch(err => console.error(err))
-    //         .finally(() => setIsLoading(false));
-    // }, []);
+    useEffect(() => {
+        setIsLoading(true);
+        console.log("DEBUG: Retrieving part data...")
+        fetch('/api/parts')
+            .then(res => {
+                if (!res.ok) throw new Error(`${res.status} ERROR: Unable to fetch parts`);
+                return res.json() as Promise<Part[]>
+            })
+            .then(data => setInventoryData(data))
+            .catch(err => console.error(err))
+            .finally(() => setIsLoading(false));
+    }, []);
 
     return isLoading ? <Skeleton className="h-[125px] w-[250px] rounded-xl" /> : (
         <article>
