@@ -1,3 +1,6 @@
+// PartCard.tsx
+// This component renders a card component for parts in the inventory.
+
 import {Button} from "@/components/ui/button"
 import {
     Card,
@@ -18,7 +21,7 @@ export default function PartCard({part}: { part: Part }) {
                 <CardDescription>{part.sku}</CardDescription>
                 <CardTitle className="w-5/6">{part.name}</CardTitle>
                 <CardAction>
-                    <p>{part.quantity}</p>
+                    <Badge variant="secondary">{part.quantity}</Badge>
                 </CardAction>
             </CardHeader>
             <CardContent>

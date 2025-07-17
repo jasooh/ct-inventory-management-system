@@ -12,7 +12,6 @@ export async function GET(): Promise<Response> {
         SELECT parts.sku, parts.name, categories.category_name, parts.quantity, parts.price_cad
         FROM parts
         INNER JOIN categories ON parts.category_id = categories.id
-        LIMIT 12
     `;
 
     const formattedData: Part[] = data.map(row => ({
