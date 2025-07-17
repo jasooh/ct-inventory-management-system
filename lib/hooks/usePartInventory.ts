@@ -35,7 +35,7 @@ export function usePartInventory() {
             return;
         }
 
-        // Query the database otherwise and cache the new data
+        // Query the database if cache is expired or empty and cache the new data
         console.log("DEBUG: Retrieved inventory is empty or cache has expired.");
         fetch('/api/parts')
             .then(res => {
