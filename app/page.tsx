@@ -3,9 +3,10 @@
 import PartGridView from "@/components/PartGridView";
 import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
-import {Skeleton} from "@/components/ui/skeleton";
 import {appConstants} from "@/lib/appConstants";
 import PartCategoryView from "@/components/PartCategoryView";
+import Image from "next/image";
+import Searchbar from "@/components/Searchbar";
 
 export default function Home() {
     return (
@@ -13,14 +14,15 @@ export default function Home() {
             {/* Sidebar */}
             <section className="flex flex-col items-center gap-10 w-[300px] h-full p-5 bg-primary-foreground rounded-xl shadow-xl">
                 <section className="w-full flex flex-col items-center gap-4">
-                    <Skeleton className="w-[200px] h-[200px]" /> {/* TODO: Replace with image */}
-                    <Label>Inventory System</Label>
+                    <Image src="/caution_tape_logo.png" alt="Caution Tape Logo" width={200} height={200} />
+                    <Label>Inventory Management System</Label>
                     <Button className="w-full">Login</Button>
                 </section>
                 <section className="flex w-full h-full flex-col">
+                    <Searchbar />
                     <PartCategoryView />
                 </section>
-                <Label className="text-gray-500 italic">v.{appConstants.BUILD_VERSION}</Label>
+                <Label className="text-gray-500 italic">{appConstants.BUILD_VERSION}</Label>
             </section>
 
             {/* Inventory view */}

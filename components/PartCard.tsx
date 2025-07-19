@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card"
 import {Badge} from "@/components/ui/badge";
 import {InventoryPart} from "@/app/types/InventoryPart";
+import {Skeleton} from "@/components/ui/skeleton";
 
 export default function PartCard({part}: { part: InventoryPart }) {
     return (
@@ -25,13 +26,12 @@ export default function PartCard({part}: { part: InventoryPart }) {
                 </CardAction>
             </CardHeader>
             <CardContent>
-                <form>
-                    <div className="flex flex-col gap-6">
-                        <div className="grid gap-2">
-                            <Badge>{part.category_name}</Badge>
-                        </div>
+                <Skeleton className="w-full h-[200px] mb-4" /> {/* TODO: Placeholder image, retrieve from S3 */}
+                <div className="flex flex-col gap-6">
+                    <div className="grid gap-2">
+                        <Badge>{part.category_name}</Badge>
                     </div>
-                </form>
+                </div>
             </CardContent>
             <CardFooter className="flex-col gap-2">
                 <Button variant="outline" className="w-full">

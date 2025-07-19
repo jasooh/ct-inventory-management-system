@@ -2,7 +2,7 @@
 // Constants used by the app.
 
 export enum appConstants {
-    BUILD_VERSION = '1.0',
+    BUILD_VERSION = 'v.1.0',
     PARTS_KEY = 'cachedInventory',
     CATEGORY_KEY = 'cacheCategory',
     TIME_WHEN_FETCHED_KEY = 'timeWhenFetched',
