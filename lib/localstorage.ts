@@ -1,7 +1,7 @@
 // localstorage.ts
 // A file containing methods that manage the app's localstorage.
 
-import {Part} from "@/app/types/part";
+import {InventoryPart} from "@/app/types/InventoryPart";
 
 const PARTS_KEY = 'cachedInventory';
 const TIME_WHEN_FETCHED_KEY = 'timeWhenFetched';
@@ -11,7 +11,7 @@ const TIME_WHEN_FETCHED_KEY = 'timeWhenFetched';
  *
  * @param parts The array of inventory parts to cache.
  */
-export function cacheParts(parts: Part[]): void {
+export function cacheParts(parts: InventoryPart[]): void {
     console.log("INFO: Saving part data to cache...")
     localStorage.setItem(PARTS_KEY, JSON.stringify(parts));
     localStorage.setItem(TIME_WHEN_FETCHED_KEY, JSON.stringify(Date.now()));
@@ -22,12 +22,12 @@ export function cacheParts(parts: Part[]): void {
  *
  * @return An array of part data representing the inventory.
  */
-export function getPartsFromCache(): Part[] {
+export function getPartsFromCache(): InventoryPart[] {
     try {
         const partsReceived = localStorage.getItem(PARTS_KEY);
         if (partsReceived != null && partsReceived.length > 0) {
             console.log("DEBUG: Local cache found! Retrieving...");
-            return JSON.parse(partsReceived) as Part[];
+            return JSON.parse(partsReceived) as InventoryPart[];
         } else {
             console.log("DEBUG: Local cache not found. Returning empty array...");
             return [];

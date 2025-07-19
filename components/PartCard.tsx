@@ -12,9 +12,9 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import {Badge} from "@/components/ui/badge";
-import {Part} from "@/app/types/part";
+import {InventoryPart} from "@/app/types/InventoryPart";
 
-export default function PartCard({part}: { part: Part }) {
+export default function PartCard({part}: { part: InventoryPart }) {
     return (
         <Card className="w-full max-w-xs flex flex-col justify-between">
             <CardHeader>

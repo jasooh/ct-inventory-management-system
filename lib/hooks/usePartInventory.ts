@@ -1,10 +1,10 @@
 // useParts.ts
 
 import {cacheParts, getPartsFromCache, getTimeWhenFetched} from "@/lib/localstorage";
-import {getMillisecondsFromMinutes} from "@/lib/utils";
+import {conversionTypes, getTimeFromMinutes} from "@/lib/utils";
 import {appConstants} from "@/lib/appConstants";
 import {useEffect, useState} from "react";
-import {Part} from "@/app/types/part";
+import {InventoryPart} from "@/app/types/InventoryPart";
 
 /**
  * A hook responsible for caching inventory data and querying the inventory database.
@@ -12,7 +12,7 @@ import {Part} from "@/app/types/part";
  * @return The inventory data, whether the data is loading, and the error message from the procedure.
  */
 export function usePartInventory() {
-    const [inventoryData, setInventoryData] = useState<Part[]>([]);
+    const [inventoryData, setInventoryData] = useState<InventoryPart[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
@@ -25,7 +25,7 @@ export function usePartInventory() {
         const expired =
             !fetchedAt ||
             Date.now() - fetchedAt >
-            getMillisecondsFromMinutes(appConstants.CACHE_DEBOUNCE_IN_MINUTES);
+            getTimeFromMinutes(appConstants.CACHE_DEBOUNCE_IN_MINUTES, conversionTypes.toMilliseconds);
 
         // Check if cached data is not empty and if the cache has not expired (5 minutes has passed)
         if (cached.length > 0 && !expired) {
@@ -40,7 +40,7 @@ export function usePartInventory() {
         fetch('/api/parts')
             .then(res => {
                 if (!res.ok) throw new Error(`Fetch failed (${res.status})`);
-                return res.json() as Promise<Part[]>;
+                return res.json() as Promise<InventoryPart[]>;
             })
             .then(data => {
                 cacheParts(data);
