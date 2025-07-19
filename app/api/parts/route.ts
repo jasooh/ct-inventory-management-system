@@ -14,6 +14,8 @@ const rateLimiter = new RateLimiterMemory({
     duration: getTimeFromMinutes(appConstants.CACHE_DEBOUNCE_IN_MINUTES, conversionTypes.toSeconds)
 })
 
+// TODO: 19/07/25 - triggering the rate limit and invalidating the local cache will cause the ui to return an error
+//                  rather than just looking into the cache we have, should fix but not a problem right now
 export async function GET(): Promise<Response> {
     // Rate limit the request
     const userIP = await getUserIP();

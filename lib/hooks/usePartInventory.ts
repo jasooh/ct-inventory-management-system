@@ -1,4 +1,5 @@
 // useParts.ts
+// Validates local inventory cache and queries inventory when necessary.
 
 import {cacheParts, getPartsFromCache, getTimeWhenFetched} from "@/lib/localstorage";
 import {conversionTypes, getTimeFromMinutes} from "@/lib/utils";
@@ -16,10 +17,11 @@ export function usePartInventory() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
-    const loadParts = (): void => {
+    const loadParts = () => {
         setIsLoading(true);
         setError(null);
 
+        // CACHE
         const cached = getPartsFromCache();
         const fetchedAt = getTimeWhenFetched();
         const expired =
@@ -29,23 +31,24 @@ export function usePartInventory() {
 
         // Check if cached data is not empty and if the cache has not expired (5 minutes has passed)
         if (cached.length > 0 && !expired) {
-            console.log("INFO: UI is rendering cached data");
+            console.log("INFO: UI is rendering inventory from cached data");
             setInventoryData(cached);
             setIsLoading(false);
             return;
         }
 
+        // DATABASE
         // Query the database if cache is expired or empty and cache the new data
         console.log("DEBUG: Retrieved inventory is empty or cache has expired.");
         fetch('/api/parts')
             .then(res => {
-                if (!res.ok) throw new Error(`Fetch failed (${res.status})`);
+                if (!res.ok) throw new Error(`${res.status} - Fetch failed.`);
                 return res.json() as Promise<InventoryPart[]>;
             })
             .then(data => {
                 cacheParts(data);
 
-                console.log("INFO: UI is rendering queried data");
+                console.log("INFO: UI is rendering inventory from queried data");
                 setInventoryData(data);
             })
             .catch(err => setError(err as Error))

@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`} // TODO: ADD THEME TOGGLE
+        className={`${geistSans.variable} ${geistMono.variable} dark antialiased`} // TODO: ADD THEME TOGGLE
       >
         {children}
       </body>
