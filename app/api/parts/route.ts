@@ -8,6 +8,7 @@ import {RateLimiterMemory} from "rate-limiter-flexible";
 import {getUserIP} from "@/project-utils/getUserIP";
 import {appConstants} from "@/lib/appConstants";
 import {conversionTypes, getTimeFromMinutes} from "@/lib/utils";
+import {useStackApp} from "@stackframe/stack";
 
 const rateLimiter = new RateLimiterMemory({
     points: 3,
@@ -50,13 +51,20 @@ export async function POST(req: Request) {
     const parts: InventoryPart[] = await req.json();
     const sql = neon(`${process.env.DATABASE_URL}`);
 
-    for (const part of parts) {
-        await sql`
+    const app = useStackApp();
+    const user = await app.getUser()
+
+    if (user) {
+        for (const part of parts) {
+            await sql`
             UPDATE parts
             SET quantity = ${part.quantity}
             WHERE sku = ${part.sku};
         `;
-    }
+        }
 
-    return NextResponse.json({success: true}, {status: 200});
+        return NextResponse.json({success: true}, {status: 200});
+    } else {
+        return NextResponse.json({success: false}, {status: 401});
+    }
 }

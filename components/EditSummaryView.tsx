@@ -34,11 +34,10 @@ export function EditSummaryView() {
         setLoading(true);
         try {
             await addPartsToInventory(Object.values(inventory.editedInventory)).then();
-            console.log("DONE EDITING!");
         } catch (err) {
             console.error(err);
         } finally {
-            console.log("DONE");
+            console.log("INFO: Updated items to database.");
             toast("Changes have been successfully committed!", {
                 position: "top-center",
                 description: `Updated ${editedInventoryLength} item(s).`,
