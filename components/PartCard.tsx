@@ -17,8 +17,9 @@ import {InventoryPart} from "@/app/types/InventoryPart";
 import {Skeleton} from "@/components/ui/skeleton";
 import {useUser} from "@stackframe/stack";
 import {MinusIcon, PlusIcon} from "@heroicons/react/16/solid";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useInventoryContext} from "@/context/InventoryContext";
+import {cacheParts} from "@/lib/localstorage";
 
 export default function PartCard({part}: { part: InventoryPart }) {
     const user = useUser();
@@ -30,6 +31,18 @@ export default function PartCard({part}: { part: InventoryPart }) {
 
     // ADD/SUBTRACT OPERATIONS - these edit a local dictionary that is later used to mutate the database.
     // TODO: Might move these to a hook for organization if it gets more messy
+    // TODO: Turn this into a general function using enums, add documentation
+    function mutateLocalInventory(editedPart: InventoryPart) {
+        const newInventory = [...inventory.currentInventory];
+        newInventory.forEach(inventoryPart => {
+            if (inventoryPart.sku == part.sku) {
+                inventoryPart.quantity = editedPart.quantity;
+            }
+        })
+        inventory.setCurrentInventory(newInventory);
+        cacheParts(newInventory);
+    }
+
     const handleOnAdd = () => {
         const currentPart = inventory.editedInventory[part.sku] ?? part;  // Check if a part is in the edited list
         const editedPart: InventoryPart = {
@@ -42,10 +55,12 @@ export default function PartCard({part}: { part: InventoryPart }) {
                 ...inventory.editedInventory,
                 [part.sku]: editedPart
             })
+
+            mutateLocalInventory(editedPart);
         } else {
-            const updated = { ...inventory.editedInventory }
-            delete updated[part.sku]
-            inventory.setEditedInventory(updated)
+            const updated = {...inventory.editedInventory};
+            delete updated[part.sku];
+            inventory.setEditedInventory(updated);
         }
     }
 
@@ -62,8 +77,10 @@ export default function PartCard({part}: { part: InventoryPart }) {
                 ...inventory.editedInventory,
                 [part.sku]: editedPart
             })
+
+            mutateLocalInventory(editedPart);
         } else {
-            const updated = { ...inventory.editedInventory }
+            const updated = {...inventory.editedInventory}
             delete updated[part.sku]
             inventory.setEditedInventory(updated)
             console.log("Duplicate, removing...");
@@ -79,11 +96,11 @@ export default function PartCard({part}: { part: InventoryPart }) {
                 {showEditMode ? (
                     <div className="flex flex-row items-center justify-between">
                         <Button className="rounded-r-none" onClick={handleOnSubtract}>
-                            <MinusIcon className="size-4" />
+                            <MinusIcon className="size-4"/>
                         </Button>
                         <Button className="grow rounded-none" variant="outline" onClick={handleOnCancel}>Cancel</Button>
                         <Button className="rounded-l-none" onClick={handleOnAdd}>
-                            <PlusIcon className="size-4" />
+                            <PlusIcon className="size-4"/>
                         </Button>
                     </div>
                 ) : (
@@ -96,7 +113,7 @@ export default function PartCard({part}: { part: InventoryPart }) {
     return (
         <Card className="w-full max-w-xs flex flex-col justify-between">
             <CardHeader>
-                <Skeleton className="w-full h-[200px]" /> {/* TODO: Placeholder image, retrieve from S3 */}
+                <Skeleton className="w-full h-[200px]"/> {/* TODO: Placeholder image, retrieve from S3 once setup */}
             </CardHeader>
             <CardContent>
                 <div className="relative flex flex-col gap-2">
@@ -108,7 +125,7 @@ export default function PartCard({part}: { part: InventoryPart }) {
             </CardContent>
             <CardFooter className={`flex-col gap-2 ${user && "pb-6"}`}>
                 {user && (
-                    <EditButtonView />
+                    <EditButtonView/>
                 )}
             </CardFooter>
         </Card>

@@ -3,10 +3,10 @@
 
 'use client'
 
-import {usePartCategories} from "@/lib/hooks/usePartCategories";
 import {Skeleton} from "@/components/ui/skeleton";
 import ErrorText from "@/components/ErrorText";
 import {Button} from "@/components/ui/button";
+import {usePartCategories} from "@/lib/hooks/usePartCategories";
 
 export default function PartCategoryView() {
     // Component state
