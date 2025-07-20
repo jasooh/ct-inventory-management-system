@@ -51,20 +51,14 @@ export async function POST(req: Request) {
     const parts: InventoryPart[] = await req.json();
     const sql = neon(`${process.env.DATABASE_URL}`);
 
-    const app = useStackApp();
-    const user = await app.getUser()
-
-    if (user) { // TODO: Verify if this works with Postman
-        for (const part of parts) {
-            await sql`
+    // TODO: NOT SECURE
+    for (const part of parts) {
+        await sql`
             UPDATE parts
             SET quantity = ${part.quantity}
             WHERE sku = ${part.sku};
         `;
-        }
-
-        return NextResponse.json({success: true}, {status: 200});
-    } else {
-        return NextResponse.json({success: false}, {status: 401});
     }
+
+    return NextResponse.json({success: true}, {status: 200});
 }

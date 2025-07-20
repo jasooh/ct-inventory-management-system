@@ -19,10 +19,11 @@ import ErrorText from "@/components/ErrorText";
 import {addPartsToInventory} from "@/lib/api/addPartsToInventory";
 import {useState} from "react";
 import {toast} from "sonner";
+import {cacheParts} from "@/lib/localstorage";
 
 export function EditSummaryView() {
-    const inventory = useInventoryContext();
-    const editedLength = Object.keys(inventory.editedInventory).length;
+    const {currentInventory, editedInventory, setEditedInventory} = useInventoryContext();
+    const editedLength = Object.keys(editedInventory).length;
     const canRenderEdits = editedLength > 0;
 
     // Component state
@@ -30,10 +31,15 @@ export function EditSummaryView() {
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async () => {
-        const editedInventoryLength = Object.keys(inventory.editedInventory).length;
+        const editedInventoryLength = Object.keys(editedInventory).length;
+
+        // TODO: we have to convert this to an array because of a type mismatch between editedInventory
+        //  (Record<string, InventoryPart> and the currentInventory (InventoryPart[]) - this should not be the case
+        const newEditedInventory = Object.values(editedInventory);
+
         setLoading(true);
         try {
-            await addPartsToInventory(Object.values(inventory.editedInventory)).then();
+            await addPartsToInventory(newEditedInventory).then();
         } catch (err) {
             console.error(err);
         } finally {
@@ -42,7 +48,7 @@ export function EditSummaryView() {
                 position: "top-center",
                 description: `Updated ${editedInventoryLength} item(s).`,
             })
-            inventory.setEditedInventory({}); // TODO: This is bad practice. We want to only remove SUCCESSFUL writes.
+            setEditedInventory({}); // TODO: This is bad practice. We want to only remove SUCCESSFUL writes.
             setOpen(false);
             setLoading(false);
         }
@@ -52,7 +58,7 @@ export function EditSummaryView() {
         <Dialog open={open} onOpenChange={setOpen}>
             <form>
                 <DialogTrigger asChild>
-                    {Object.keys(inventory.editedInventory).length > 0 && (
+                    {Object.keys(editedInventory).length > 0 && (
                         <Button className="absolute bottom-5 right-5" variant="outline">
                             <PencilSquareIcon className="size-4"/>
                         </Button>
@@ -67,7 +73,7 @@ export function EditSummaryView() {
                     </DialogHeader>
                     <div className="h-[200px] overflow-y-scroll grid gap-4 px-10">
                         {canRenderEdits ? (
-                            Object.entries(inventory.editedInventory).map(([partSKU, partToBeEdited]) => (
+                            Object.entries(editedInventory).map(([partSKU, partToBeEdited]) => (
                                 <EditPartRowView
                                     partToBeEdited={partToBeEdited}
                                     canRenderEdits={canRenderEdits}

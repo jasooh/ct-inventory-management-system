@@ -40,7 +40,6 @@ export default function PartCard({part}: { part: InventoryPart }) {
             }
         })
         inventory.setCurrentInventory(newInventory);
-        cacheParts(newInventory);
     }
 
     const handleOnAdd = () => {
