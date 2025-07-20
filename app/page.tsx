@@ -9,7 +9,6 @@ import PartCategoryView from "@/components/PartCategoryView";
 import Image from "next/image";
 import Searchbar from "@/components/Searchbar";
 import LoginButton from "@/components/LoginButton";
-import {useInventoryContext} from "@/context/InventoryContext";
 
 export default function Home() {
     return (
