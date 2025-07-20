@@ -12,7 +12,6 @@ export default function PartGridView() {
     // Component state
     const {inventoryData, isLoading, error} = usePartInventory();
 
-    // Component UI
     return isLoading ? <Skeleton className="w-full h-full rounded-xl"/> : (
         <article className="h-full overflow-y-scroll">
             {(error && inventoryData != null) && <ErrorText text={error.message}/>}

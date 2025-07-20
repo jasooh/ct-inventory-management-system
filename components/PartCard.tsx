@@ -17,8 +17,7 @@ import {InventoryPart} from "@/app/types/InventoryPart";
 import {Skeleton} from "@/components/ui/skeleton";
 import {useUser} from "@stackframe/stack";
 import {MinusIcon, PlusIcon} from "@heroicons/react/16/solid";
-import {useState} from "react";
-import {Label} from "@/components/ui/label";
+import {useEffect, useState} from "react";
 import {useInventoryContext} from "@/context/InventoryContext";
 
 export default function PartCard({part}: { part: InventoryPart }) {
@@ -29,21 +28,46 @@ export default function PartCard({part}: { part: InventoryPart }) {
     const handleOnClick = () => setShowEditMode(!showEditMode);
     const handleOnCancel = () => setShowEditMode(false);
 
-    // TODO: Might move these to a hook for organization
+    // ADD/SUBTRACT OPERATIONS - these edit a local dictionary that is later used to mutate the database.
+    // TODO: Might move these to a hook for organization if it gets more messy
     const handleOnAdd = () => {
+        const currentPart = inventory.editedInventory[part.sku] ?? part;  // Check if a part is in the edited list
         const editedPart: InventoryPart = {
-            ...part,
-            quantity: part.quantity + 1,
+            ...currentPart,
+            quantity: currentPart.quantity + 1,
         }
-        inventory.setEditedInventory([...inventory.editedInventory, editedPart]);
+
+        if (editedPart.quantity + 1 != part.quantity) {
+            inventory.setEditedInventory({
+                ...inventory.editedInventory,
+                [part.sku]: editedPart
+            })
+        } else {
+            const updated = { ...inventory.editedInventory }
+            delete updated[part.sku]
+            inventory.setEditedInventory(updated)
+        }
     }
 
     const handleOnSubtract = () => {
+        const currentPart = inventory.editedInventory[part.sku] ?? part;
+        const diff = currentPart.quantity - 1 >= 0 ? currentPart.quantity - 1 : currentPart.quantity;
         const editedPart: InventoryPart = {
-            ...part,
-            quantity: part.quantity - 1,
+            ...currentPart,
+            quantity: diff,
         }
-        inventory.setEditedInventory([...inventory.editedInventory, editedPart]);
+
+        if (diff != part.quantity) {
+            inventory.setEditedInventory({
+                ...inventory.editedInventory,
+                [part.sku]: editedPart
+            })
+        } else {
+            const updated = { ...inventory.editedInventory }
+            delete updated[part.sku]
+            inventory.setEditedInventory(updated)
+            console.log("Duplicate, removing...");
+        }
     }
 
     /**

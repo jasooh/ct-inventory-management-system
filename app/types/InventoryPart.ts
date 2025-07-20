@@ -2,9 +2,9 @@
 // An interface defining the fields of a part record in our SQL database.
 
 export interface InventoryPart {
-    sku: String;
-    name: String;
-    category_name: String;
+    sku: string;
+    name: string;
+    category_name: string;
     quantity: number;
     price_cad: number;
 }

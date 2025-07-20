@@ -8,13 +8,13 @@ import { InventoryPart } from "@/app/types/InventoryPart";
 
 // Defining the data the context provides
 interface InventoryContextType {
-    editedInventory: InventoryPart[];
-    setEditedInventory: React.Dispatch<React.SetStateAction<InventoryPart[]>>;
+    editedInventory: Record<string, InventoryPart>;
+    setEditedInventory: React.Dispatch<React.SetStateAction<Record<string, InventoryPart>>>;
 }
 
 // Default values to return if context is called outside of provider
 const DefaultInventoryContext: InventoryContextType = {
-    editedInventory: [],
+    editedInventory: {},
     setEditedInventory: () => {
         console.warn("setEditedInventory called outside provider.");
     },
@@ -23,7 +23,7 @@ const DefaultInventoryContext: InventoryContextType = {
 const InventoryContext = createContext<InventoryContextType>(DefaultInventoryContext);
 
 export function InventoryContextProvider({ children }: { children: React.ReactNode }) {
-    const [editedInventory, setEditedInventory] = useState<InventoryPart[]>([]);
+    const [editedInventory, setEditedInventory] = useState<Record<string, InventoryPart>>({});
 
     return (
         <InventoryContext.Provider value={{ editedInventory, setEditedInventory }}>

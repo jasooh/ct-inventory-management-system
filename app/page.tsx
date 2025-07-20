@@ -9,10 +9,11 @@ import PartCategoryView from "@/components/PartCategoryView";
 import Image from "next/image";
 import Searchbar from "@/components/Searchbar";
 import LoginButton from "@/components/LoginButton";
+import {EditSummaryView} from "@/components/EditSummaryView";
 
 export default function Home() {
     return (
-        <main className="w-full h-screen flex flex-row items-center justify-center gap-4 p-4">
+        <main className="relative w-full h-screen flex flex-row items-center justify-center gap-4 p-4">
             {/* Sidebar */}
             <section
                 className="flex flex-col items-center gap-10 w-[300px] h-full p-5 bg-primary-foreground rounded-xl shadow-xl">
@@ -33,6 +34,9 @@ export default function Home() {
                 className="w-3/4 h-full p-5 bg-primary-foreground rounded-xl shadow-xl flex flex-col justify-between gap-4">
                 <PartGridView/>
             </section>
+
+            {/* Edit summary */}
+            <EditSummaryView />
         </main>
     );
 }
