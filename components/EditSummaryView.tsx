@@ -48,6 +48,7 @@ export function EditSummaryView() {
                 position: "top-center",
                 description: `Updated ${editedInventoryLength} item(s).`,
             })
+            cacheParts(currentInventory)
             setEditedInventory({}); // TODO: This is bad practice. We want to only remove SUCCESSFUL writes.
             setOpen(false);
             setLoading(false);
