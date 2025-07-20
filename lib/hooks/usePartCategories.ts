@@ -17,7 +17,6 @@ export function usePartCategories() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
-    console.log("DEBUG: Retrieved category data is empty or cache has expired.");
     const loadCategories = () => {
         setIsLoading(true);
         setError(null);

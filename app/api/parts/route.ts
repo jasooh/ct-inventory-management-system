@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     const app = useStackApp();
     const user = await app.getUser()
 
-    if (user) {
+    if (user) { // TODO: Verify if this works with Postman
         for (const part of parts) {
             await sql`
             UPDATE parts

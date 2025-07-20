@@ -11,11 +11,11 @@ import {useInventoryContext} from "@/context/InventoryContext";
 import {useEffect} from "react";
 
 export default function PartGridView() {
-    const inventoryContext = useInventoryContext();
+    const {selectedCategory, searchBarQuery, setCurrentInventory} = useInventoryContext();
     // Component state
     const {inventoryData, isLoading, error} = usePartInventory();
     // Update context on component mount
-    useEffect(() => inventoryContext.setCurrentInventory(inventoryData), [inventoryData]);
+    useEffect(() => setCurrentInventory(inventoryData), [inventoryData]);
 
     return isLoading ? <Skeleton className="w-full h-full rounded-xl"/> : (
         <article className="h-full overflow-y-scroll">
@@ -23,9 +23,20 @@ export default function PartGridView() {
             {inventoryData ? (
                 <section className="grid grid-cols-4 gap-2 overflow-y-auto">
                     {
-                        inventoryData.map((partInInventory, index) => (
-                            <PartCard part={partInInventory} key={index}/>
-                        ))
+                        inventoryData
+                            .filter(part => {
+                                const matchesCategory =
+                                    selectedCategory === "None" || part.category_name === selectedCategory;
+
+                                const matchesSearch =
+                                    part.name.toLowerCase().includes(searchBarQuery.toLowerCase()) ||
+                                    part.sku.toLowerCase().includes(searchBarQuery.toLowerCase());
+
+                                return matchesCategory && matchesSearch;
+                            })
+                            .map((partInInventory, index) => (
+                                <PartCard part={partInInventory} key={index} />
+                            ))
                     }
                 </section>
             ) : (
