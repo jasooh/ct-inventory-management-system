@@ -1,99 +1,99 @@
 // EditSummaryView.tsx
 // This component renders a modal that confirms if the user wants to modify the database.
 
-import {Button} from "@/components/ui/button"
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import {PencilSquareIcon} from "@heroicons/react/16/solid";
-import {useInventoryContext} from "@/context/InventoryContext";
-import EditPartRowView from "@/components/EditPartRowView";
-import ErrorText from "@/components/ErrorText";
-import {addPartsToInventory} from "@/lib/api/addPartsToInventory";
-import {useState} from "react";
-import {toast} from "sonner";
-import {cacheParts} from "@/lib/localstorage";
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { PencilSquareIcon } from "@heroicons/react/16/solid"
+import { useInventoryContext } from "@/context/InventoryContext"
+import EditPartRowView from "@/components/EditPartRowView"
+import ErrorText from "@/components/ErrorText"
+import { addPartsToInventory } from "@/lib/api/addPartsToInventory"
+import { useState } from "react"
+import { toast } from "sonner"
+import { cacheParts } from "@/lib/localstorage"
+import {Label} from "@/components/ui/label";
 
 export function EditSummaryView() {
-    const {currentInventory, editedInventory, setEditedInventory} = useInventoryContext();
-    const editedLength = Object.keys(editedInventory).length;
-    const canRenderEdits = editedLength > 0;
+    const { currentInventory, editedInventory, setEditedInventory } = useInventoryContext()
+    const editedLength = Object.keys(editedInventory).length
+    const canRenderEdits = editedLength > 0
 
-    // Component state
-    const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [open, setOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const handleSubmit = async () => {
-        const editedInventoryLength = Object.keys(editedInventory).length;
+        const count = Object.keys(editedInventory).length
+        const updates = Object.values(editedInventory)
 
-        // TODO: we have to convert this to an array because of a type mismatch between editedInventory
-        //  (Record<string, InventoryPart> and the currentInventory (InventoryPart[]) - this should not be the case
-        const newEditedInventory = Object.values(editedInventory);
-
-        setLoading(true);
+        setLoading(true)
         try {
-            await addPartsToInventory(newEditedInventory).then();
-        } catch (err) {
-            console.error(err);
-        } finally {
-            console.log("INFO: Updated items to database.");
+            await addPartsToInventory(updates)
             toast("Changes have been successfully committed!", {
                 position: "top-center",
-                description: `Updated ${editedInventoryLength} item(s).`,
+                description: `Updated ${count} item(s).`,
             })
             cacheParts(currentInventory)
-            setEditedInventory({}); // TODO: This is bad practice. We want to only remove SUCCESSFUL writes.
-            setOpen(false);
-            setLoading(false);
+            setEditedInventory({})
+            setOpen(false)
+        } catch (err) {
+            console.error(err)
+        } finally {
+            setLoading(false)
         }
-    };
+    }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <form>
-                <DialogTrigger asChild>
-                    {Object.keys(editedInventory).length > 0 && (
-                        <Button className="absolute bottom-5 right-5" variant="outline">
-                            <PencilSquareIcon className="size-4"/>
-                        </Button>
-                    )}
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[600px]">
-                    <DialogHeader>
-                        <DialogTitle>Commit changes</DialogTitle>
-                        <DialogDescription>
+        <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+                {canRenderEdits && (
+                    <Button className="absolute bottom-5 right-5" variant="outline">
+                        <PencilSquareIcon className="size-4" />
+                        <Label>View changes</Label>
+                    </Button>
+                )}
+            </SheetTrigger>
+            <SheetContent className="w-[600px]">
+                <form
+                    className="h-full flex flex-col justify-between px-2"
+                    onSubmit={e => {
+                        e.preventDefault()
+                        handleSubmit()
+                    }}
+                >
+                    <SheetHeader>
+                        <SheetTitle>Commit changes</SheetTitle>
+                        <SheetDescription>
                             Confirm your updates to the inventory.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="h-[200px] overflow-y-scroll grid gap-4 px-10">
+                        </SheetDescription>
+                    </SheetHeader>
+
+                    <div className="h-[200px] overflow-y-scroll grid gap-4 p-2">
                         {canRenderEdits ? (
-                            Object.entries(editedInventory).map(([partSKU, partToBeEdited]) => (
+                            Object.entries(editedInventory).map(([sku, part]) => (
                                 <EditPartRowView
-                                    partToBeEdited={partToBeEdited}
+                                    key={sku}
+                                    partToBeEdited={part}
                                     canRenderEdits={canRenderEdits}
-                                    key={partSKU}
                                 />
                             ))
                         ) : (
-                            <ErrorText isError={false}
-                                       text="There are no parts left to edit. Please try again with changes."/>
+                            <ErrorText
+                                isError={false}
+                                text="There are no parts left to edit. Please try again with changes."
+                            />
                         )}
                     </div>
-                    <DialogFooter>
-                        <DialogClose asChild>
+
+                    <SheetFooter>
+                        <SheetClose asChild>
                             <Button variant="outline">Cancel</Button>
-                        </DialogClose>
-                        <Button disabled={!canRenderEdits || loading} type="submit" onClick={handleSubmit}>Save changes</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </form>
-        </Dialog>
+                        </SheetClose>
+                        <Button disabled={!canRenderEdits || loading} type="submit">
+                            {loading ? "Saving..." : "Save changes"}
+                        </Button>
+                    </SheetFooter>
+                </form>
+            </SheetContent>
+        </Sheet>
     )
 }

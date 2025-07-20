@@ -26,13 +26,13 @@ export default function EditPartRowView({partToBeEdited, canRenderEdits}: {
     }
 
     return (
-        <div className="grid grid-cols-[100px_1fr_1fr_100px] w-full h-[100px] gap-5">
-            <Skeleton className=""/>
+        <div className="w-full h-[100px] grid grid-cols-[100px_1fr_1fr_100px] gap-5 place-items-center rounded-md shadow-sm">
+            <Skeleton className="size-full rounded-r-none"/>
             <section>
                 <Label>{partToBeEdited.name}</Label>
                 <Label className="text-sm text-gray-500 italic">{partToBeEdited.sku}</Label>
             </section>
-            <Badge className="size-8">{partToBeEdited.quantity}</Badge>
+            <Badge className="size-6" variant="secondary">{partToBeEdited.quantity}</Badge>
             <Button disabled={!canRenderEdits} variant="destructive" onClick={handleDelete}>Remove</Button>
         </div>
     )
