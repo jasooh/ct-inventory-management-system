@@ -24,7 +24,7 @@ import {cacheParts} from "@/lib/localstorage";
 import {Spinner} from "@stackframe/stack-ui";
 
 export function EditSummaryView() {
-    const {editedInventory, summaryOfPartChanges} = useInventoryContext()
+    const {editedInventory, summaryOfPartChanges, setCurrentInventory} = useInventoryContext()
     const {addChangedPartsToDatabase, isLoading} = useAddPartsToInventory()
 
     const [open, setOpen] = useState(false)
@@ -40,6 +40,7 @@ export function EditSummaryView() {
                     description: `Updated ${summaryOfPartChanges.length} item(s).`,
                 })
                 setOpen(false)
+                setCurrentInventory(editedInventory)  // Making the new source of truth our successful changes
                 cacheParts(editedInventory)  // Cache the changes locally so we don't have to re-query
             } else {
                 toast("Request was unsuccessful. Please try again.", {
