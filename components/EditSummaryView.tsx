@@ -14,14 +14,13 @@ import { cacheParts } from "@/lib/localstorage"
 import {Label} from "@/components/ui/label";
 
 export function EditSummaryView() {
-    const { editedInventory, summaryOfPartChanges } = useInventoryContext()
+    const { summaryOfPartChanges } = useInventoryContext()
     const canRenderEdits = summaryOfPartChanges.length > 0
 
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
 
     const handleSubmit = async () => {
-
         setLoading(true)
         try {
             // TODO: need to handle errors here
@@ -51,10 +50,6 @@ export function EditSummaryView() {
             <SheetContent className="w-[600px]">
                 <form
                     className="h-full flex flex-col justify-between px-2"
-                    onSubmit={e => {
-                        e.preventDefault()
-                        handleSubmit()
-                    }}
                 >
                     <SheetHeader>
                         <SheetTitle>Commit changes</SheetTitle>
@@ -63,7 +58,7 @@ export function EditSummaryView() {
                         </SheetDescription>
                     </SheetHeader>
 
-                    <div className="h-[200px] overflow-y-scroll grid gap-4 p-2">
+                    <div className="h-full overflow-y-scroll p-2">
                         {canRenderEdits ? (
                             summaryOfPartChanges).map((part) => (
                                 <EditPartRowView
@@ -84,7 +79,7 @@ export function EditSummaryView() {
                         <SheetClose asChild>
                             <Button variant="outline">Cancel</Button>
                         </SheetClose>
-                        <Button disabled={!canRenderEdits || loading} type="submit">
+                        <Button disabled={!canRenderEdits || loading} type="submit" onClick={handleSubmit}>
                             {loading ? "Saving..." : "Save changes"}
                         </Button>
                     </SheetFooter>

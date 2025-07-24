@@ -19,7 +19,7 @@ export default function EditPartRowView({partToBeEdited, canRenderEdits}: {
     /**
      * Handle deleting an item from the edit summary
      */
-    const handleDelete = () => {
+    const handleRevertPart = () => {
         const origPart = currentInventory.find(partInInventory => partInInventory.sku === partInInventory.sku);
         if (origPart) {
             setEditedInventory(prev =>
@@ -42,7 +42,7 @@ export default function EditPartRowView({partToBeEdited, canRenderEdits}: {
                 <Label className="text-sm text-gray-500 italic">{partToBeEdited.sku}</Label>
             </section>
             <Badge className="size-6" variant="secondary">{partToBeEdited.quantity}</Badge>
-            <Button disabled={!canRenderEdits} variant="destructive" onClick={handleDelete}>Remove</Button>
+            <Button disabled={!canRenderEdits} variant="destructive" onClick={handleRevertPart}>Remove</Button>
         </div>
     )
 }
