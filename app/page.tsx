@@ -25,8 +25,8 @@ export default function Home() {
                 </section>
                 {/* Cateogry selector */}
                 <section className="flex w-full h-full flex-col">
-                    <Searchbar/>
-                    <PartCategoryView/>
+                    <Searchbar />
+                    <PartCategoryView />
                 </section>
 
                 {/* Build version text */}
@@ -36,7 +36,7 @@ export default function Home() {
             {/* Inventory view */}
             <section
                 className="w-3/4 h-full p-5 bg-primary-foreground rounded-xl shadow-xl flex flex-col justify-between gap-4">
-                <PartGridView/>
+                <PartGridView />
             </section>
 
             {/* Edit summary */}

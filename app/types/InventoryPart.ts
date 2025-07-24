@@ -7,6 +7,8 @@ export interface InventoryPart {
     category_name: string;
     quantity: number;
     price_cad: number;
+    image_key: string | null;
+    signed_url: string | null;
 }
 
 export interface InventoryCategory {

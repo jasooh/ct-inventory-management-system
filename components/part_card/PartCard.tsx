@@ -16,6 +16,7 @@ import {InventoryPart} from "@/app/types/InventoryPart";
 import {Skeleton} from "@/components/ui/skeleton";
 import {useUser} from "@stackframe/stack";
 import EditButton from "@/components/part_card/EditButton";
+import Image from "next/image";
 
 export default function PartCard({part}: { part: InventoryPart }) {
     // Context
@@ -23,8 +24,19 @@ export default function PartCard({part}: { part: InventoryPart }) {
 
     return (
         <Card className="w-full max-w-xs flex flex-col justify-between">
-            <CardHeader>
-                <Skeleton className="w-full h-[200px]"/> {/* TODO: Placeholder image, retrieve from S3 once setup */}
+            <CardHeader className="flex justify-center items-center">
+                <div className="relative aspect-[1/1] w-full">
+                    {part.signed_url ? (
+                        <Image
+                            src={part.signed_url}
+                            alt={part.name}
+                            fill
+                            className="rounded-md"
+                        />
+                    ) : (
+                        <Skeleton className="w-full h-full" />
+                    )}
+                </div>
             </CardHeader>
             <CardContent>
                 <div className="relative flex flex-col gap-2">
