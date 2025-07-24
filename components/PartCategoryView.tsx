@@ -24,7 +24,15 @@ export default function PartCategoryView() {
             <article>
                 {(error && categoryData != null) && <ErrorText text={error.message}/>}
                 {categoryData ? (
-                    <section className="flex flex-col">
+                    <section className="flex flex-col h-[375px] overflow-y-scroll">
+                        <Button
+                            className={`${selectedCategory == "None" &&
+                            "hover:bg-black hover:text-white bg-black text-white duration-100"}`} // TODO: Make this work with swappable themes
+                            variant="ghost"
+                            onClick={() => handleClick("None")}
+                        >
+                            None
+                        </Button>
                         {
                             categoryData.map((categoryType, index) => (
                                 <Button
@@ -38,14 +46,6 @@ export default function PartCategoryView() {
                                 </Button>
                             ))
                         }
-                        <Button
-                            className={`${selectedCategory == "None" &&
-                            "hover:bg-black hover:text-white bg-black text-white duration-100"}`} // TODO: Make this work with swappable themes
-                            variant="ghost"
-                            onClick={() => handleClick("None")}
-                        >
-                            None
-                        </Button>
                     </section>
                 ) : (
                     <ErrorText text="Category could not be found."/>
