@@ -9,6 +9,7 @@ import {getUserIP} from "@/project-utils/getUserIP";
 import {appConstants} from "@/lib/appConstants";
 import {conversionTypes, getTimeFromMinutes} from "@/lib/utils";
 import {useStackApp} from "@stackframe/stack";
+import {APIResponse} from "@/app/types/APIResponse";
 
 const rateLimiter = new RateLimiterMemory({
     points: 3,
@@ -18,6 +19,9 @@ const rateLimiter = new RateLimiterMemory({
 // TODO: 19/07/25 - triggering the rate limit and invalidating the local cache will cause the ui to return an error
 //                  rather than just looking into the cache we have, should fix but not a problem right now
 // TODO: handle errors better here
+/**
+ * Obtains inventory part data from the database.
+ */
 export async function GET(): Promise<Response> {
     // Rate limit the request
     const userIP = await getUserIP();
@@ -32,7 +36,7 @@ export async function GET(): Promise<Response> {
     const data = await sql`
         SELECT parts.sku, parts.name, categories.category_name, parts.quantity, parts.price_cad
         FROM parts
-                 INNER JOIN categories ON parts.category_id = categories.id
+        INNER JOIN categories ON parts.category_id = categories.id
     `;
 
     // Format the data for use
@@ -47,18 +51,31 @@ export async function GET(): Promise<Response> {
     return NextResponse.json(formattedData, {status: 200});
 }
 
+/**
+ * Uploads the POSTed data to the database.
+ *
+ * @param req The client request.
+ * @constructor
+ */
 export async function POST(req: Request) {
     const parts: InventoryPart[] = await req.json();
     const sql = neon(`${process.env.DATABASE_URL}`);
 
-    // TODO: NOT SECURE
-    for (const part of parts) {
-        await sql`
-            UPDATE parts
-            SET quantity = ${part.quantity}
-            WHERE sku = ${part.sku};
-        `;
+    // TODO: NOT SECURED WITH USER YET
+    try {
+        for (const part of parts) {
+            await sql`
+                UPDATE parts
+                SET quantity = ${part.quantity}
+                WHERE sku = ${part.sku};
+            `;
+        }
+
+        return NextResponse.json<APIResponse>({success: true}, {status: 200});
+    } catch (error) {
+        if (error instanceof Error) {
+            return NextResponse.json<APIResponse>({success: true, error: error.message}, {status: 500});
+        }
     }
 
-    return NextResponse.json({success: true}, {status: 200});
 }

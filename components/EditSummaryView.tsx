@@ -1,39 +1,56 @@
 // EditSummaryView.tsx
 // This component renders a modal that confirms if the user wants to modify the database.
 
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { PencilSquareIcon } from "@heroicons/react/16/solid"
-import { useInventoryContext } from "@/context/InventoryContext"
+import {Button} from "@/components/ui/button"
+import {
+    Sheet,
+    SheetClose,
+    SheetContent,
+    SheetDescription,
+    SheetFooter,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger
+} from "@/components/ui/sheet"
+import {PencilSquareIcon} from "@heroicons/react/16/solid"
+import {useInventoryContext} from "@/context/InventoryContext"
 import EditPartRowView from "@/components/EditPartRowView"
 import ErrorText from "@/components/ErrorText"
-import { addPartsToInventory } from "@/lib/api/addPartsToInventory"
-import { useState } from "react"
-import { toast } from "sonner"
-import { cacheParts } from "@/lib/localstorage"
+import {useAddPartsToInventory} from "@/lib/hooks/useAddPartsToInventory"
+import {useState} from "react"
+import {toast} from "sonner"
 import {Label} from "@/components/ui/label";
+import {cacheParts} from "@/lib/localstorage";
 
 export function EditSummaryView() {
-    const { summaryOfPartChanges } = useInventoryContext()
-    const canRenderEdits = summaryOfPartChanges.length > 0
+    const {editedInventory, summaryOfPartChanges} = useInventoryContext()
+    const {addChangedPartsToDatabase, isLoading} = useAddPartsToInventory()
 
     const [open, setOpen] = useState(false)
-    const [loading, setLoading] = useState(false)
+
+    const canRenderEdits = summaryOfPartChanges.length > 0
 
     const handleSubmit = async () => {
-        setLoading(true)
         try {
-            // TODO: need to handle errors here
-            await addPartsToInventory(summaryOfPartChanges)
-            toast("Changes have been successfully committed!", {
+            const res = await addChangedPartsToDatabase(summaryOfPartChanges)
+            if (res.success) {
+                toast("Changes have been successfully committed!", {
+                    position: "top-center",
+                    description: `Updated ${summaryOfPartChanges.length} item(s).`,
+                })
+                setOpen(false)
+                cacheParts(editedInventory)  // Cache the changes locally so we don't have to re-query
+            } else {
+                toast("Request was unsuccessful. Please try again.", {
+                    position: "top-center",
+                    description: `ERROR: ${res.error}`,
+                })
+            }
+        } catch (error) {
+            toast("An unexpected error has occurred.", {
                 position: "top-center",
-                description: `Updated ${summaryOfPartChanges.length} item(s).`,
+                description: `ERROR: ${error}`,
             })
-            setOpen(false)
-        } catch (err) {
-            console.error(err)
-        } finally {
-            setLoading(false)
         }
     }
 
@@ -42,7 +59,7 @@ export function EditSummaryView() {
             <SheetTrigger asChild>
                 {canRenderEdits && (
                     <Button className="absolute bottom-5 right-5" variant="outline">
-                        <PencilSquareIcon className="size-4" />
+                        <PencilSquareIcon className="size-4"/>
                         <Label>View changes</Label>
                     </Button>
                 )}
@@ -79,8 +96,8 @@ export function EditSummaryView() {
                         <SheetClose asChild>
                             <Button variant="outline">Cancel</Button>
                         </SheetClose>
-                        <Button disabled={!canRenderEdits || loading} type="submit" onClick={handleSubmit}>
-                            {loading ? "Saving..." : "Save changes"}
+                        <Button disabled={!canRenderEdits || isLoading} type="submit" onClick={handleSubmit}>
+                            {isLoading ? "Saving..." : "Save changes"}
                         </Button>
                     </SheetFooter>
                 </form>
