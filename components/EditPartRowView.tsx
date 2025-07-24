@@ -12,8 +12,10 @@ export default function EditPartRowView({partToBeEdited, canRenderEdits}: {
     partToBeEdited: InventoryPart,
     canRenderEdits: boolean,
 }) {
+    // Context
     const {currentInventory, setEditedInventory} = useInventoryContext();
 
+    // Helper methods
     /**
      * Handle deleting an item from the edit summary
      */
@@ -30,6 +32,7 @@ export default function EditPartRowView({partToBeEdited, canRenderEdits}: {
         }
     }
 
+    // Component rendering
     return (
         <div
             className="w-full h-[100px] grid grid-cols-[100px_1fr_1fr_100px] gap-5 place-items-center rounded-md shadow-sm">
