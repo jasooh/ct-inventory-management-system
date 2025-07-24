@@ -21,6 +21,7 @@ import {useState} from "react"
 import {toast} from "sonner"
 import {Label} from "@/components/ui/label";
 import {cacheParts} from "@/lib/localstorage";
+import {Spinner} from "@stackframe/stack-ui";
 
 export function EditSummaryView() {
     const {editedInventory, summaryOfPartChanges} = useInventoryContext()
@@ -97,7 +98,7 @@ export function EditSummaryView() {
                             <Button variant="outline">Cancel</Button>
                         </SheetClose>
                         <Button disabled={!canRenderEdits || isLoading} type="submit" onClick={handleSubmit}>
-                            {isLoading ? "Saving..." : "Save changes"}
+                            {isLoading ? <Spinner /> : "Save changes"}
                         </Button>
                     </SheetFooter>
                 </form>
