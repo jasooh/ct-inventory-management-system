@@ -9,6 +9,7 @@ import {useInventoryContext} from "@/context/InventoryContext";
 import {Badge} from "@/components/ui/badge";
 import {useEffect, useState} from "react";
 import {ArrowRightIcon} from "@heroicons/react/16/solid";
+import PartImage from "@/components/PartImage";
 
 export default function EditPartRowView({partToBeEdited, canRenderEdits}: {
     partToBeEdited: InventoryPart,
@@ -26,7 +27,7 @@ export default function EditPartRowView({partToBeEdited, canRenderEdits}: {
     }, [])
 
     /**
-     * Handle deleting an item from the edit summary
+     * Handles deleting an item from the edit summary
      */
     const handleRevertPart = () => {
         if (originalPartToBeEdited) {
@@ -45,7 +46,9 @@ export default function EditPartRowView({partToBeEdited, canRenderEdits}: {
     return (
         <div
             className="w-full h-[100px] grid grid-cols-[100px_1fr_1fr_100px] gap-5 place-items-center rounded-md shadow-sm">
-            <Skeleton className="size-full rounded-r-none"/>
+            <div className="relative size-full">
+                <PartImage part={partToBeEdited} className="rounded-r-none" />
+            </div>
             <section>
                 <Label>{partToBeEdited.name}</Label>
                 <Label className="text-sm text-gray-500 italic">{partToBeEdited.sku}</Label>
