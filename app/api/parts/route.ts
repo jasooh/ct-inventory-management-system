@@ -56,6 +56,7 @@ export async function GET(): Promise<Response> {
         data.map(async (row) => {
             let signedUrl = null;
 
+            // Generate a signedUrl for the S3 images
             if (row.image_key) {
                 const command = new GetObjectCommand({
                     Bucket: process.env.BUCKET_NAME!,
