@@ -17,7 +17,7 @@ export function usePartInventory() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
-    const loadParts = () => {
+    const loadInventoryParts = () => {
         setIsLoading(true);
         setError(null);
 
@@ -56,7 +56,7 @@ export function usePartInventory() {
     };
 
     // Call this procedure every time the calling component mounts
-    useEffect(() => loadParts(), []);
+    useEffect(() => loadInventoryParts(), []);
 
     return {inventoryData, isLoading, error}
 }

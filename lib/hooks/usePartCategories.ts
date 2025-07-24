@@ -31,7 +31,7 @@ export function usePartCategories() {
 
         // Check if cached data is not empty and if the cache has not expired (5 minutes has passed)
         if (cached.length > 0 && !expired) {
-            console.log("INFO: UI is rendering inventory from cached data");
+            console.log("INFO: UI is rendering categories from cached data");
             setCategoryData(cached);
             setIsLoading(false);
             return;

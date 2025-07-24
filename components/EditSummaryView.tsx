@@ -14,26 +14,22 @@ import { cacheParts } from "@/lib/localstorage"
 import {Label} from "@/components/ui/label";
 
 export function EditSummaryView() {
-    const { currentInventory, editedInventory, setEditedInventory } = useInventoryContext()
-    const editedLength = Object.keys(editedInventory).length
-    const canRenderEdits = editedLength > 0
+    const { editedInventory, summaryOfPartChanges } = useInventoryContext()
+    const canRenderEdits = summaryOfPartChanges.length > 0
 
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
 
     const handleSubmit = async () => {
-        const count = Object.keys(editedInventory).length
-        const updates = Object.values(editedInventory)
 
         setLoading(true)
         try {
-            await addPartsToInventory(updates)
+            // TODO: need to handle errors here
+            await addPartsToInventory(summaryOfPartChanges)
             toast("Changes have been successfully committed!", {
                 position: "top-center",
-                description: `Updated ${count} item(s).`,
+                description: `Updated ${summaryOfPartChanges.length} item(s).`,
             })
-            cacheParts(currentInventory)
-            setEditedInventory({})
             setOpen(false)
         } catch (err) {
             console.error(err)
@@ -69,13 +65,13 @@ export function EditSummaryView() {
 
                     <div className="h-[200px] overflow-y-scroll grid gap-4 p-2">
                         {canRenderEdits ? (
-                            Object.entries(editedInventory).map(([sku, part]) => (
+                            summaryOfPartChanges).map((part) => (
                                 <EditPartRowView
-                                    key={sku}
+                                    key={part.sku}
                                     partToBeEdited={part}
                                     canRenderEdits={canRenderEdits}
                                 />
-                            ))
+                            )
                         ) : (
                             <ErrorText
                                 isError={false}

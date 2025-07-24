@@ -3,18 +3,22 @@
 
 'use client';
 
-import React, {createContext, useState, useContext} from "react";
-import {InventoryCategory, InventoryPart} from "@/app/types/InventoryPart";
+import React, {createContext, useState, useContext, useEffect, useMemo} from "react";
+import {InventoryPart} from "@/app/types/InventoryPart";
+import {usePartInventory} from "@/lib/hooks/usePartInventory";
 
 // Defining the data the context provides
 interface InventoryContextType {
-    // Edited inventory holds the user's desired changes to the database.
-    editedInventory: Record<string, InventoryPart>;
-    setEditedInventory: React.Dispatch<React.SetStateAction<Record<string, InventoryPart>>>;
-
     // Current inventory provides the state of the currently rendered inventory.
     currentInventory: InventoryPart[];
     setCurrentInventory: React.Dispatch<React.SetStateAction<InventoryPart[]>>;
+
+    // Edited inventory holds the user's desired changes to the database.
+    editedInventory: InventoryPart[];
+    setEditedInventory: React.Dispatch<React.SetStateAction<InventoryPart[]>>;
+
+    // Diff data
+    summaryOfPartChanges: InventoryPart[];
 
     // Searchbar data
     searchBarQuery: string;
@@ -27,14 +31,15 @@ interface InventoryContextType {
 
 // Default values to return if context is called outside of provider
 const DefaultInventoryContext: InventoryContextType = {
-    editedInventory: {},
-    setEditedInventory: () => {
-        console.warn("setEditedInventory called outside provider.");
-    },
     currentInventory: [],
     setCurrentInventory: () => {
         console.warn("setCurrentInventory called outside provider.");
     },
+    editedInventory: [],
+    setEditedInventory: () => {
+        console.warn("setEditedInventory called outside provider.");
+    },
+    summaryOfPartChanges: [],
     searchBarQuery: "",
     setSearchBarQuery: () => {
         console.warn("setSearchBarQuery called outside provider.");
@@ -48,21 +53,47 @@ const DefaultInventoryContext: InventoryContextType = {
 const InventoryContext = createContext<InventoryContextType>(DefaultInventoryContext);
 
 export function InventoryContextProvider({children}: { children: React.ReactNode }) {
-    const [editedInventory, setEditedInventory] = useState<Record<string, InventoryPart>>({});
     const [currentInventory, setCurrentInventory] = useState<InventoryPart[]>([]);
+    const [editedInventory, setEditedInventory] = useState<InventoryPart[]>([]);
     const [searchBarQuery, setSearchBarQuery] = useState<string>("");
     const [selectedCategory, setSelectedCategory] = useState<string>("None");
 
+    // Hooks
+    const {inventoryData} = usePartInventory();
+
+    // NOTE: inventoryData is the data from the cache or queried. currentInventory is the current react state we
+    //   interact with.
+    useEffect(() => {
+        console.log("INFO: Seeding local copies with queried/cached data...");
+        setCurrentInventory(inventoryData);
+        setEditedInventory(inventoryData);
+    }, [inventoryData])
+
+    // Calculate the difference between current and edited data
+    const summaryOfPartChanges = useMemo<InventoryPart[]>(() => {
+        // Make a hashmap of the data queried/cached
+        const origMap = Object.fromEntries(
+            currentInventory.map(p => [p.sku, p])
+        );
+
+        // Return an array of inventory parts where
+        return editedInventory.filter(part => {
+            const orig = origMap[part.sku];  // O(1) look-up time
+            return orig && orig.quantity !== part.quantity;  // Show parts with differing quantities
+        });
+    }, [editedInventory, currentInventory]);
+
     return (
         <InventoryContext.Provider value={{
-            editedInventory,
-            setEditedInventory,
             currentInventory,
             setCurrentInventory,
+            editedInventory,
+            setEditedInventory,
+            summaryOfPartChanges,
             searchBarQuery,
             setSearchBarQuery,
             selectedCategory,
-            setSelectedCategory
+            setSelectedCategory,
         }}>
             {children}
         </InventoryContext.Provider>

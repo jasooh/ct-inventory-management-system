@@ -12,21 +12,27 @@ export default function EditPartRowView({partToBeEdited, canRenderEdits}: {
     partToBeEdited: InventoryPart,
     canRenderEdits: boolean,
 }) {
-    const inventory = useInventoryContext();
+    const {currentInventory, setEditedInventory} = useInventoryContext();
 
     /**
      * Handle deleting an item from the edit summary
      */
     const handleDelete = () => {
-        if (inventory.editedInventory[partToBeEdited.sku]) {
-            const editedInventoryWithoutPart = {...inventory.editedInventory};
-            delete editedInventoryWithoutPart[partToBeEdited.sku];
-            inventory.setEditedInventory(editedInventoryWithoutPart);
+        const origPart = currentInventory.find(partInInventory => partInInventory.sku === partInInventory.sku);
+        if (origPart) {
+            setEditedInventory(prev =>
+                prev.map(partInEditedInventory =>
+                    partInEditedInventory.sku == partToBeEdited.sku ?
+                        {...partInEditedInventory, quantity: origPart.quantity} :  // revert to old value
+                        partInEditedInventory  // otherwise leave alone and move on
+                )
+            )
         }
     }
 
     return (
-        <div className="w-full h-[100px] grid grid-cols-[100px_1fr_1fr_100px] gap-5 place-items-center rounded-md shadow-sm">
+        <div
+            className="w-full h-[100px] grid grid-cols-[100px_1fr_1fr_100px] gap-5 place-items-center rounded-md shadow-sm">
             <Skeleton className="size-full rounded-r-none"/>
             <section>
                 <Label>{partToBeEdited.name}</Label>
