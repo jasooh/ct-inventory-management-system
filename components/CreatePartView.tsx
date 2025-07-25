@@ -98,18 +98,28 @@ export default function CreatePartView() {
                     </DialogHeader>
                     <div className="grid gap-4">
                         <div className="grid gap-3">
-                            <Label htmlFor="name-1">SKU</Label>
-                            <Input id="name-1" name="name" required />
+                            <Label>SKU</Label>
+                            <Input name="sku" onChange={e => setSku(e.target.value)} required />
                         </div>
                         <div className="grid gap-3">
-                            <Label htmlFor="username-1">Name</Label>
-                            <Input id="username-1" name="username" required />
+                            <Label>Name</Label>
+                            <Input name="name" onChange={e => setName(e.target.value)} required />
+                        </div>
+                        {/* TODO: make category selector and a separate tab to make your own categories */}
+                        <div className="grid gap-3">
+                            <Label>Category</Label>
+                            <Input name="category" onChange={e => setCategory(e.target.value)} required />
                         </div>
                         <div className="grid gap-3">
-                            {/* TODO: make category selector and a separate tab to make your own categories */}
-                            <Label htmlFor="username-1">Category</Label>
-                            <Input id="username-1" name="username" required />
+                            <Label>Quantity</Label>
+                            <Input name="quantity" type="number" onChange={e => setQuantity(parseInt(e.target.value))} required />
                         </div>
+                        <div className="grid gap-3">
+                            <Label>Price (CAD)</Label>
+                            <Input name="price" type="number" onChange={e => setPrice(parseInt(e.target.value))} required />
+                        </div>
+
+                        {/* TODO: Add image */}
                     </div>
                     <DialogFooter>
                         <DialogClose asChild>
