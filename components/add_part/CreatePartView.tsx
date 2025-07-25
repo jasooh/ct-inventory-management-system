@@ -30,7 +30,7 @@ export default function CreatePartView() {
     const {currentCategories, editedInventory, setCurrentInventory, setEditedInventory} = useInventoryContext()
 
     // Hooks
-    const {addNewPartsToDatabase, isLoading, error} = useAddPartsToInventory();
+    const {addNewPartsToDatabase, addNewImageToS3, isLoading, error} = useAddPartsToInventory();
 
     // Component state
     const [open, setOpen] = useState(false);
@@ -52,7 +52,6 @@ export default function CreatePartView() {
 
         // Used for local rendering
         const categoryNameFromId = currentCategories.find(currentCategory => currentCategory.id == parseInt(category))?.category_name ?? "None"
-        console.log(category);
         const partToAdd: InventoryPart = {
             sku: formattedSku,
             name: name,
@@ -64,6 +63,10 @@ export default function CreatePartView() {
         }
 
         try {
+            if (formattedImageKey && image) {
+                await addNewImageToS3(formattedImageKey, image);
+            }
+
             const res = await addNewPartsToDatabase(partToAdd)
             if (res.success) {
                 toast(`Your new part, ${partToAdd.name}, has been added successfully!`, {
