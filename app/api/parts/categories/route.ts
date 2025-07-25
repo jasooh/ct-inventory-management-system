@@ -24,10 +24,11 @@ export async function GET(){
     }
 
     const sql = neon(`${process.env.DATABASE_URL}`);
-    const data = await sql`SELECT categories.category_name FROM categories`;
+    const data = await sql`SELECT categories.category_name, categories.id FROM categories`;
 
     const formattedData: InventoryCategory[] = data.map(row => ({
         category_name: row.category_name,
+        id: row.id,
     }))
 
     return NextResponse.json(formattedData, { status: 200 });

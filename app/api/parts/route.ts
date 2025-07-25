@@ -48,7 +48,7 @@ export async function GET(): Promise<Response> {
     const data = await sql`
         SELECT parts.sku, parts.name, categories.category_name, parts.quantity, parts.price_cad, parts.image_key
         FROM parts
-        INNER JOIN categories ON parts.category_id = categories.id
+                 INNER JOIN categories ON parts.category_id = categories.id
     `;
 
     // Format the data for use
@@ -86,10 +86,9 @@ export async function GET(): Promise<Response> {
 }
 
 /**
- * Uploads the POSTed data to the database.
+ * Uploads the updated part data to the database.
  *
  * @param req The client request.
- * @constructor
  */
 export async function PUT(req: Request) {
     const parts: InventoryPart[] = await req.json();
@@ -108,8 +107,29 @@ export async function PUT(req: Request) {
         return NextResponse.json<APIResponse>({success: true}, {status: 200});
     } catch (error) {
         if (error instanceof Error) {
-            return NextResponse.json<APIResponse>({success: true, error: error.message}, {status: 500});
+            return NextResponse.json<APIResponse>({success: false, error: error.message}, {status: 500});
         }
     }
+}
 
+/**
+ * Add the new part data to the database.
+ */
+export async function POST(req: Request) {
+    const part: InventoryPart = await req.json();
+    const sql = neon(`${process.env.DATABASE_URL}`);
+
+    try {
+        await sql`
+            INSERT INTO parts (sku, name, category_id, quantity, price, image_url)
+            VALUES (${part.sku}, ${part.name}, ${part.category_name}, ${part.quantity}, ${part.price_cad},
+                    ${part.image_key});
+        `;
+
+        return NextResponse.json<APIResponse>({success: true}, {status: 200});
+    } catch (error) {
+        if (error instanceof Error) {
+            return NextResponse.json<APIResponse>({success: false, error: error.message}, {status: 500})
+        }
+    }
 }

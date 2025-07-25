@@ -14,7 +14,7 @@ import {
 import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
-import {CheckCircleIcon, ExclamationCircleIcon, PlusIcon} from "@heroicons/react/16/solid";
+import {CheckCircleIcon, CurrencyDollarIcon, ExclamationCircleIcon, PlusIcon} from "@heroicons/react/16/solid";
 import {useState} from "react";
 import {useAddPartsToInventory} from "@/lib/hooks/useAddPartsToInventory";
 import {InventoryPart} from "@/app/types/InventoryPart";
@@ -139,12 +139,16 @@ export default function CreatePartView() {
                         </div>
                         <div className="grid gap-3">
                             <Label>Price (CAD)</Label>
-                            <Input
-                                name="price"
-                                type="number"
-                                onChange={e => setPrice(parseInt(e.target.value))}
-                                required
-                            />
+                            <div className="flex flex-row items-center">
+                                <div className="h-full border rounded-l-md size-6 text-center leading-8 select-none">$</div>
+                                <Input
+                                    name="price"
+                                    type="number"
+                                    className="rounded-l-none border-l-0"
+                                    onChange={e => setPrice(parseInt(e.target.value))}
+                                    required
+                                />
+                            </div>
                         </div>
                         <div className="grid gap-3">
                             <Label>Image</Label>

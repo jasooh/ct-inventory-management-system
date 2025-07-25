@@ -2,6 +2,8 @@
 // Renders the category selector for adding and selecting inventory categories
 // TODO: add new categories
 
+"use client"
+
 import {Button} from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -16,7 +18,7 @@ import {useInventoryContext} from "@/context/InventoryContext";
 
 export function AddCategorySelector({value, action}: { value: string; action: Dispatch<SetStateAction<string>> }) {
     const {currentCategories} = useInventoryContext();
-
+    console.log(currentCategories);
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>

@@ -13,4 +13,5 @@ export interface InventoryPart {
 
 export interface InventoryCategory {
     category_name: string;
+    id: number;
 }
