@@ -21,6 +21,7 @@ import {InventoryPart} from "@/app/types/InventoryPart";
 import {toast} from "sonner";
 import {cacheParts} from "@/lib/localstorage";
 import {useInventoryContext} from "@/context/InventoryContext";
+import {NumberInput} from "@/components/NumberInput";
 
 export default function CreatePartView() {
     // Context
@@ -44,8 +45,10 @@ export default function CreatePartView() {
     const handleSubmit = async (e: React.FormEvent)=> {
         e.preventDefault();
 
+        const formattedSku: string = `${sku.slice(0, 3)}-${sku.slice(3)}`
+
         const partToAdd: InventoryPart = {
-            sku: sku,
+            sku: formattedSku,
             name: name,
             category_name: category,
             quantity: quantity,
@@ -53,6 +56,8 @@ export default function CreatePartView() {
             image_key: null,
             signed_url: null
         }
+
+        console.log(partToAdd);
 
         try {
             const res = await addNewPartsToDatabase(partToAdd)
@@ -99,7 +104,8 @@ export default function CreatePartView() {
                     <div className="grid gap-4">
                         <div className="grid gap-3">
                             <Label>SKU</Label>
-                            <Input name="sku" onChange={e => setSku(e.target.value)} required />
+                            {/*<Input className="w-1/4" name="sku" onChange={e => setSku(e.target.value)} required />*/}
+                            <NumberInput value={sku} action={setSku} />
                         </div>
                         <div className="grid gap-3">
                             <Label>Name</Label>

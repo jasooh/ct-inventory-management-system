@@ -24,6 +24,7 @@ export default function PartCard({part}: { part: InventoryPart }) {
     const user = useUser();
 
     return (
+        // TODO: cards do not adapt when zooming out
         <Card className="w-full max-w-xs flex flex-col justify-between">
             <CardHeader className="flex justify-center items-center">
                 <div className="relative aspect-[1/1] w-full">

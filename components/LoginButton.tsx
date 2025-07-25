@@ -7,7 +7,7 @@ import {Button} from "@/components/ui/button";
 import {UserCircleIcon} from "@heroicons/react/16/solid";
 import {useRouter} from "next/navigation";
 import {UserButton, useUser} from "@stackframe/stack";
-import CreatePartView from "@/components/CreatePartView";
+import CreatePartView from "@/components/add_part/CreatePartView";
 
 export default function LoginButton() {
     const router = useRouter();
