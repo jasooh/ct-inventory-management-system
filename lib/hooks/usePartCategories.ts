@@ -7,6 +7,8 @@ import {cacheCategories, getCategoriesFromCache, getTimeWhenFetched} from "@/lib
 import {conversionTypes, getTimeFromMinutes} from "@/lib/utils";
 import {appConstants} from "@/lib/appConstants";
 
+// TODO: we can probably fuse usePartCategories and usePartInventory into one
+
 /**
  * A hook responsible for caching inventory category data and querying for them.
  *

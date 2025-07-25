@@ -1,30 +1,30 @@
-// useAddPartsToInventory.ts
-// Custom hook for adding new inventory items.
+// addPartsToInventory.ts
+// Custom hook for committing edited inventory changes.
 
-import {useCallback, useState} from "react";
 import {InventoryPart} from "@/app/types/InventoryPart";
 import {APIResponse} from "@/app/types/APIResponse";
+import {useCallback, useState} from "react";
 
-export function useAddPartsToInventory() {
+export function useEditPartsInInventory() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
     /**
      * Mutates the inventory database with the changed items.
      */
-    const addNewPartsToDatabase = useCallback(
-        async (newPart: InventoryPart): Promise<APIResponse> => {
+    const addChangedPartsToDatabase = useCallback(
+        async (parts: InventoryPart[]): Promise<APIResponse> => {
             setIsLoading(true);
             setError(null);
 
             try {
                 const res = await fetch("/api/parts", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify(newPart),
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(parts),
                 });
                 if (!res.ok) {
-                    throw new Error(`${res.status} — POST failed. Please try again.`);
+                    throw new Error(`${res.status} — PUT failed. Please try again.`);
                 }
                 return (await res.json()) as APIResponse;
             } catch (err) {
@@ -37,5 +37,5 @@ export function useAddPartsToInventory() {
         []
     );
 
-    return {addNewPartsToDatabase, isLoading, error};
+    return { addChangedPartsToDatabase, isLoading, error };
 }

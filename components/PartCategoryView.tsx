@@ -31,7 +31,7 @@ export default function PartCategoryView() {
                             variant="ghost"
                             onClick={() => handleClick("None")}
                         >
-                            None
+                            All
                         </Button>
                         {
                             categoryData.map((categoryType, index) => (

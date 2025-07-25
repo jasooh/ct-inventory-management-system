@@ -12,11 +12,11 @@ import {
     SheetTitle,
     SheetTrigger
 } from "@/components/ui/sheet"
-import {PencilSquareIcon} from "@heroicons/react/16/solid"
+import {CheckCircleIcon, ExclamationCircleIcon, PencilSquareIcon} from "@heroicons/react/16/solid"
 import {useInventoryContext} from "@/context/InventoryContext"
 import EditPartRowView from "@/components/EditPartRowView"
 import ErrorText from "@/components/ErrorText"
-import {useAddPartsToInventory} from "@/lib/hooks/useAddPartsToInventory"
+import {useEditPartsInInventory} from "@/lib/hooks/useEditPartsInInventory"
 import {useState} from "react"
 import {toast} from "sonner"
 import {Label} from "@/components/ui/label";
@@ -25,7 +25,7 @@ import {Spinner} from "@stackframe/stack-ui";
 
 export function EditSummaryView() {
     const {editedInventory, summaryOfPartChanges, setCurrentInventory} = useInventoryContext()
-    const {addChangedPartsToDatabase, isLoading} = useAddPartsToInventory()
+    const {addChangedPartsToDatabase, isLoading} = useEditPartsInInventory()
 
     const [open, setOpen] = useState(false)
 
@@ -38,6 +38,7 @@ export function EditSummaryView() {
                 toast("Changes have been successfully committed!", {
                     position: "top-center",
                     description: `Updated ${summaryOfPartChanges.length} item(s).`,
+                    icon: <CheckCircleIcon className="text-green-300" />
                 })
                 setOpen(false)
                 setCurrentInventory(editedInventory)  // Making the new source of truth our successful changes
@@ -45,13 +46,15 @@ export function EditSummaryView() {
             } else {
                 toast("Request was unsuccessful. Please try again.", {
                     position: "top-center",
-                    description: `ERROR: ${res.error}`,
+                    description: `${res.error}`,
+                    icon: <ExclamationCircleIcon className="text-destructive" />
                 })
             }
         } catch (error) {
             toast("An unexpected error has occurred.", {
                 position: "top-center",
-                description: `ERROR: ${error}`,
+                description: `${error}`,
+                icon: <ExclamationCircleIcon className="text-destructive" />
             })
         }
     }

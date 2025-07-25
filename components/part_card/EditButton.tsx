@@ -51,6 +51,7 @@ export default function EditButton(part: InventoryPart) {
                     </Button>
                 </div>
             ) : (
+                // TODO: should rework the UI flow of this button, very clunky
                 <Button variant="outline" className="w-full" onClick={handleOnClick}>Edit</Button>
             )}
         </div>

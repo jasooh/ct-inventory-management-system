@@ -91,7 +91,7 @@ export async function GET(): Promise<Response> {
  * @param req The client request.
  * @constructor
  */
-export async function POST(req: Request) {
+export async function PUT(req: Request) {
     const parts: InventoryPart[] = await req.json();
     const sql = neon(`${process.env.DATABASE_URL}`);
 

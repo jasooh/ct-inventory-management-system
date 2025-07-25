@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import {UserCircleIcon} from "@heroicons/react/16/solid";
 import {useRouter} from "next/navigation";
 import {UserButton, useUser} from "@stackframe/stack";
+import CreatePartView from "@/components/CreatePartView";
 
 export default function LoginButton() {
     const router = useRouter();
@@ -20,7 +21,11 @@ export default function LoginButton() {
     }
 
     return user ? (
-        <UserButton/>
+        <div className="flex flex-row gap-4">
+            <UserButton />
+            <CreatePartView />
+        </div>
+
     ) : (
         <Button className="w-full" onClick={handleLoginRedirect}>
             <UserCircleIcon className="size-4"/>
