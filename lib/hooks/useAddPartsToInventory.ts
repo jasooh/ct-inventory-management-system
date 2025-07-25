@@ -50,7 +50,7 @@ export function useAddPartsToInventory() {
                     throw new Error(`${res.status} — S3 request failed. Please try again.`)
                 }
 
-                const { uploadUrl } = await res.json()
+                const { uploadUrl, downloadUrl } = await res.json()
 
                 const uploadRes = await fetch(uploadUrl, {
                     method: "PUT",
@@ -60,6 +60,8 @@ export function useAddPartsToInventory() {
                 if (!uploadRes.ok) {
                     throw new Error(`Upload to S3 failed: ${uploadRes.status}`);
                 }
+
+                return downloadUrl;
             } catch (err) {
                 setError(err as Error)
                 throw err

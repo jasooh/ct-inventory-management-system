@@ -63,8 +63,9 @@ export default function CreatePartView() {
         }
 
         try {
+            let signedUrl: string | null = null;
             if (formattedImageKey && image) {
-                await addNewImageToS3(formattedImageKey, image);
+                signedUrl = await addNewImageToS3(formattedImageKey, image);
             }
 
             const res = await addNewPartsToDatabase(partToAdd)
@@ -78,7 +79,7 @@ export default function CreatePartView() {
 
                 // Set state hooks are asynchronous, so we re-seed all data with the new data at the same time
                 setEditedInventory(prev => {
-                    const updated = [...prev, { ...partToAdd, category_name: categoryNameFromId }];
+                    const updated = [...prev, { ...partToAdd, category_name: categoryNameFromId, signed_url: signedUrl }];
                     setCurrentInventory(updated);
                     cacheParts(updated);
                     return updated;
@@ -132,11 +133,6 @@ export default function CreatePartView() {
                         <div className="grid gap-3">
                             <Label>Category</Label>
                             <AddCategorySelector value={category} action={setCategory}/>
-                            {/*<Input*/}
-                            {/*    name="category"*/}
-                            {/*    onChange={e => setCategory(e.target.value)}*/}
-                            {/*    required*/}
-                            {/*/>*/}
                         </div>
                         <div className="grid gap-3">
                             <Label>Quantity</Label>

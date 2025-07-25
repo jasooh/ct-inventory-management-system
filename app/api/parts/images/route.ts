@@ -5,13 +5,13 @@
 import {RateLimiterMemory} from "rate-limiter-flexible";
 import {conversionTypes, getTimeFromMinutes} from "@/lib/utils";
 import {appConstants} from "@/lib/appConstants";
-import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
+import {GetObjectCommand, PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import {getUserIP} from "@/project-utils/getUserIP";
 import {NextResponse} from "next/server";
 import {getSignedUrl} from "@aws-sdk/s3-request-presigner";
 
 const rateLimiter = new RateLimiterMemory({
-    points: 300,
+    points: 3,
     duration: getTimeFromMinutes(appConstants.CACHE_DEBOUNCE_IN_MINUTES, conversionTypes.toSeconds)
 })
 
@@ -52,5 +52,20 @@ export async function POST(req: Request) {
         )
     }
 
-    return NextResponse.json({ uploadUrl }, { status: 200 })
+    let downloadUrl: string;
+    try {
+        const getCmd = new GetObjectCommand({
+            Bucket: process.env.BUCKET_NAME!,
+            Key: image_key,
+        });
+        downloadUrl = await getSignedUrl(s3, getCmd, { expiresIn: 3600 });
+    } catch (err) {
+        console.error("GET presign failed:", err);
+        return NextResponse.json(
+            {message: "Failed to generate download URL", error: (err as Error).message},
+            {status: 500}
+        );
+    }
+
+    return NextResponse.json({ uploadUrl, downloadUrl }, { status: 200 })
 }

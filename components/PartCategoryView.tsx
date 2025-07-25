@@ -24,7 +24,7 @@ export default function PartCategoryView() {
             <article>
                 {(error && categoryData != null) && <ErrorText text={error.message}/>}
                 {categoryData ? (
-                    <section className="flex flex-col h-[375px] overflow-y-scroll">
+                    <section className="flex flex-col h-[300px] xl:h-[375px] overflow-y-scroll">
                         <Button
                             className={`${selectedCategory == "None" &&
                             "hover:bg-black hover:text-white bg-black text-white duration-100"}`} // TODO: Make this work with swappable themes
