@@ -23,6 +23,7 @@ import {cacheParts} from "@/lib/localstorage";
 import {useInventoryContext} from "@/context/InventoryContext";
 import {SkuInput} from "@/components/add_part/SkuInput";
 import {AddCategorySelector} from "@/components/add_part/AddCategorySelector";
+import {Spinner} from "@stackframe/stack-ui";
 
 export default function CreatePartView() {
     // Context
@@ -90,7 +91,7 @@ export default function CreatePartView() {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <form onSubmit={handleSubmit}>
+            <section>
                 <DialogTrigger asChild>
                     <Button variant="outline">
                         <PlusIcon className="size-4"/> Add Part
@@ -103,7 +104,7 @@ export default function CreatePartView() {
                             Create a new part to add to the database.
                         </DialogDescription>
                     </DialogHeader>
-                    <section className="grid grid-cols-2 gap-4">
+                    <form className="grid grid-cols-2 gap-4" onSubmit={handleSubmit}>
                         <div className="grid gap-3">
                             <Label>SKU</Label>
                             <SkuInput value={sku} action={setSku}/>
@@ -120,7 +121,7 @@ export default function CreatePartView() {
 
                         <div className="grid gap-3">
                             <Label>Category</Label>
-                            <AddCategorySelector value={category} action={setCategory} />
+                            <AddCategorySelector value={category} action={setCategory}/>
                             {/*<Input*/}
                             {/*    name="category"*/}
                             {/*    onChange={e => setCategory(e.target.value)}*/}
@@ -156,15 +157,17 @@ export default function CreatePartView() {
                                 required
                             />
                         </div>
-                    </section>
-                    <DialogFooter>
-                        <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
-                        </DialogClose>
-                        <Button>Save changes</Button>
-                    </DialogFooter>
+                        <DialogFooter className="col-start-2">
+                            <DialogClose asChild>
+                                <Button variant="outline">Cancel</Button>
+                            </DialogClose>
+                            <Button type="submit" className="w-24">
+                                {isLoading ? <Spinner/> : "Add part"}
+                            </Button>
+                        </DialogFooter>
+                    </form>
                 </DialogContent>
-            </form>
+            </section>
         </Dialog>
     )
 }

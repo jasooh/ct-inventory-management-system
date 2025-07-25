@@ -20,6 +20,7 @@ export function SkuInput({value, action}: { value: string, action: Dispatch<SetS
             pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
             value={value}
             onChange={action}
+            required
         >
 
             <InputOTPGroup>
