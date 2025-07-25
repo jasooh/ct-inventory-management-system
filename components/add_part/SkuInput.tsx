@@ -7,12 +7,13 @@ import {REGEXP_ONLY_DIGITS_AND_CHARS} from "input-otp"
 
 import {
     InputOTP,
-    InputOTPGroup, InputOTPSeparator,
+    InputOTPGroup,
+    InputOTPSeparator,
     InputOTPSlot,
 } from "@/components/ui/input-otp"
 import {Dispatch, SetStateAction} from "react";
 
-export function NumberInput({value, action}: { value: string, action: Dispatch<SetStateAction<string>> }) {
+export function SkuInput({value, action}: { value: string, action: Dispatch<SetStateAction<string>> }) {
     return (
         <InputOTP
             maxLength={7}

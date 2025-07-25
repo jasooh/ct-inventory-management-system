@@ -4,8 +4,9 @@
 'use client';
 
 import React, {createContext, useState, useContext, useEffect, useMemo} from "react";
-import {InventoryPart} from "@/app/types/InventoryPart";
+import {InventoryCategory, InventoryPart} from "@/app/types/InventoryPart";
 import {usePartInventory} from "@/lib/hooks/usePartInventory";
+import {usePartCategories} from "@/lib/hooks/usePartCategories";
 
 // Defining the data the context provides
 interface InventoryContextType {
@@ -17,8 +18,12 @@ interface InventoryContextType {
     editedInventory: InventoryPart[];
     setEditedInventory: React.Dispatch<React.SetStateAction<InventoryPart[]>>;
 
-    // Diff data
+    // Stores the difference between queried/cached data (source of truth) and user-editied database
     summaryOfPartChanges: InventoryPart[];
+
+    // Current category provides the state of the currently rendered category.
+    currentCategories: InventoryCategory[];
+    setCurrentCategories: React.Dispatch<React.SetStateAction<InventoryCategory[]>>;
 
     // Searchbar data
     searchBarQuery: string;
@@ -40,6 +45,10 @@ const DefaultInventoryContext: InventoryContextType = {
         console.warn("setEditedInventory called outside provider.");
     },
     summaryOfPartChanges: [],
+    currentCategories: [],
+    setCurrentCategories: () => {
+        console.warn("setCurrentCategories called outside provider.");
+    },
     searchBarQuery: "",
     setSearchBarQuery: () => {
         console.warn("setSearchBarQuery called outside provider.");
@@ -55,11 +64,13 @@ const InventoryContext = createContext<InventoryContextType>(DefaultInventoryCon
 export function InventoryContextProvider({children}: { children: React.ReactNode }) {
     const [currentInventory, setCurrentInventory] = useState<InventoryPart[]>([]);
     const [editedInventory, setEditedInventory] = useState<InventoryPart[]>([]);
+    const [currentCategories, setCurrentCategories] = useState<InventoryCategory[]>([]);
     const [searchBarQuery, setSearchBarQuery] = useState<string>("");
     const [selectedCategory, setSelectedCategory] = useState<string>("None");
 
     // Hooks
     const {inventoryData} = usePartInventory();
+    const {categoryData} = usePartCategories();
 
     // NOTE: inventoryData is the data from the cache or queried. currentInventory is the current react state we
     //   interact with.
@@ -67,6 +78,7 @@ export function InventoryContextProvider({children}: { children: React.ReactNode
         console.log("INFO: Seeding local copies with queried/cached data...");
         setCurrentInventory(inventoryData);
         setEditedInventory(inventoryData);
+        setCurrentCategories(categoryData);
     }, [inventoryData])
 
     // Calculate the difference between current and edited data
@@ -90,6 +102,8 @@ export function InventoryContextProvider({children}: { children: React.ReactNode
             editedInventory,
             setEditedInventory,
             summaryOfPartChanges,
+            currentCategories,
+            setCurrentCategories,
             searchBarQuery,
             setSearchBarQuery,
             selectedCategory,
