@@ -18,7 +18,7 @@ export function useAddPartsToInventory() {
             setError(null);
 
             try {
-                const res = await fetch("/api/parts", {
+                const res: Response = await fetch("/api/parts", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(newPart),

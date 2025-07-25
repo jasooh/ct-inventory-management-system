@@ -14,7 +14,7 @@ import {
 import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
-import {CheckCircleIcon, CurrencyDollarIcon, ExclamationCircleIcon, PlusIcon} from "@heroicons/react/16/solid";
+import {CheckCircleIcon, ExclamationCircleIcon, PlusIcon} from "@heroicons/react/16/solid";
 import {useState} from "react";
 import {useAddPartsToInventory} from "@/lib/hooks/useAddPartsToInventory";
 import {InventoryPart} from "@/app/types/InventoryPart";
@@ -27,7 +27,7 @@ import {Spinner} from "@stackframe/stack-ui";
 
 export default function CreatePartView() {
     // Context
-    const {editedInventory, setCurrentInventory} = useInventoryContext()
+    const {currentCategories, editedInventory, setCurrentInventory, setEditedInventory} = useInventoryContext()
 
     // Hooks
     const {addNewPartsToDatabase, isLoading, error} = useAddPartsToInventory();
@@ -38,7 +38,7 @@ export default function CreatePartView() {
     // Form fields
     const [sku, setSku] = useState<string>("");
     const [name, setName] = useState<string>("");
-    const [category, setCategory] = useState<string>("None");
+    const [category, setCategory] = useState<string>("0");
     const [quantity, setQuantity] = useState<number>(0);
     const [price, setPrice] = useState<number>(0);
     const [image, setImage] = useState<File | null>(null);
@@ -50,17 +50,18 @@ export default function CreatePartView() {
         const formattedSku: string = `${sku.slice(0, 3)}-${sku.slice(3)}`
         const formattedImageKey: string | null = image ? `${formattedSku}_${image.name}` : null;
 
+        // Used for local rendering
+        const categoryNameFromId = currentCategories.find(currentCategory => currentCategory.id == parseInt(category))?.category_name ?? "None"
+        console.log(category);
         const partToAdd: InventoryPart = {
             sku: formattedSku,
             name: name,
-            category_name: category,
+            category_name: parseInt(category),
             quantity: quantity,
             price_cad: price,
             image_key: formattedImageKey,
             signed_url: null
         }
-
-        console.log(partToAdd);
 
         try {
             const res = await addNewPartsToDatabase(partToAdd)
@@ -71,8 +72,14 @@ export default function CreatePartView() {
                     icon: <CheckCircleIcon className="text-green-300"/>
                 })
                 setOpen(false)
-                setCurrentInventory(editedInventory)  // Making the new source of truth our successful changes
-                cacheParts(editedInventory)  // Cache the changes locally so we don't have to re-query
+
+                // Set state hooks are asynchronous, so we re-seed all data with the new data at the same time
+                setEditedInventory(prev => {
+                    const updated = [...prev, { ...partToAdd, category_name: categoryNameFromId }];
+                    setCurrentInventory(updated);
+                    cacheParts(updated);
+                    return updated;
+                });
             } else {
                 toast("Request was unsuccessful. Please try again.", {
                     position: "top-center",

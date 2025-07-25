@@ -9,7 +9,7 @@ import {getUserIP} from "@/project-utils/getUserIP";
 import {appConstants} from "@/lib/appConstants";
 import {conversionTypes, getTimeFromMinutes} from "@/lib/utils";
 import {APIResponse} from "@/app/types/APIResponse";
-import {GetObjectCommand, S3Client} from "@aws-sdk/client-s3";
+import {GetObjectCommand, PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import {getSignedUrl} from "@aws-sdk/s3-request-presigner";
 
 
@@ -63,6 +63,8 @@ export async function GET(): Promise<Response> {
                     Key: row.image_key,
                 });
 
+                // Signed URL for image viewing
+                // TODO: ADD A CHECK IF THE KEY EXISTS, IT STILL GENERATES A SIGNED URL THAT USERS CAN SEND REQUESTS TO
                 signedUrl = await getSignedUrl(
                     s3,
                     command,
@@ -121,9 +123,9 @@ export async function POST(req: Request) {
 
     try {
         await sql`
-            INSERT INTO parts (sku, name, category_id, quantity, price, image_url)
+            INSERT INTO parts (sku, name, category_id, quantity, price_cad, image_key)
             VALUES (${part.sku}, ${part.name}, ${part.category_name}, ${part.quantity}, ${part.price_cad},
-                    ${part.image_key});
+                    ${part.image_key})
         `;
 
         return NextResponse.json<APIResponse>({success: true}, {status: 200});

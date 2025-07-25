@@ -18,17 +18,21 @@ import {useInventoryContext} from "@/context/InventoryContext";
 
 export function AddCategorySelector({value, action}: { value: string; action: Dispatch<SetStateAction<string>> }) {
     const {currentCategories} = useInventoryContext();
-    console.log(currentCategories);
+
+    // Used for local rendering
+    const categoryNameFromId =
+        currentCategories.find(category => category.id.toString() == value)?.category_name
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline">{value}</Button>
+                <Button variant="outline">{categoryNameFromId}</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
                 <DropdownMenuRadioGroup value={value} onValueChange={action}>
                     {
                         currentCategories.map((categoryType, index) => (
-                            <DropdownMenuRadioItem key={index} value={categoryType.category_name}>
+                            <DropdownMenuRadioItem key={index} value={categoryType.id.toString()}>
                                 {categoryType.category_name}
                             </DropdownMenuRadioItem>
                         ))

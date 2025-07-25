@@ -31,7 +31,6 @@ export default function EditPartRowView({partToBeEdited, canRenderEdits}: {
      */
     const handleRevertPart = () => {
         if (originalPartToBeEdited) {
-            console.log(`edited ${originalPartToBeEdited.name}: ${originalPartToBeEdited.quantity}\ncurrent ${partToBeEdited.name}: ${partToBeEdited.quantity}`);
             setEditedInventory(prev =>
                 prev.map(partInEditedInventory =>
                     partInEditedInventory.sku == partToBeEdited.sku ?

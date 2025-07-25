@@ -4,7 +4,7 @@
 export interface InventoryPart {
     sku: string;
     name: string;
-    category_name: string;
+    category_name: string | number;
     quantity: number;
     price_cad: number;
     image_key: string | null;
