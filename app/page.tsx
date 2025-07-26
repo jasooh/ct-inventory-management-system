@@ -13,25 +13,26 @@ import {EditSummaryView} from "@/components/EditSummaryView";
 
 export default function Home() {
     return (
-        <main className="relative w-full h-screen flex flex-row items-center justify-center gap-4 p-4">
+        <main className="w-full h-screen flex flex-row items-center justify-center gap-4 p-4">
             {/* Sidebar view */}
-            <section
+            <aside
                 className="flex flex-col items-center gap-10 w-[300px] h-full p-5 bg-primary-foreground rounded-xl shadow-xl">
                 <section className="w-full flex flex-col items-center gap-4">
                     {/* Logo */}
                     <Image src="/caution_tape_logo.png" alt="Caution Tape Logo" width={200} height={200} />
-                    <Label>Inventory Management System</Label>
+                    <div className="flex flex-col items-center gap-1">
+                        <Label>Inventory Management System</Label>
+                        {/* Build version text */}
+                        <Label className="text-gray-500 italic">{appConstants.BUILD_VERSION}</Label>
+                    </div>
                     <LoginButton />
                 </section>
                 {/* Cateogry selector */}
-                <section className="flex w-full h-full flex-col">
-                    <Searchbar />
+                <Searchbar />
+                <section className="w-full overflow-y-auto">
                     <PartCategoryView />
                 </section>
-
-                {/* Build version text */}
-                <Label className="text-gray-500 italic">{appConstants.BUILD_VERSION}</Label>
-            </section>
+            </aside>
 
             {/* Inventory view */}
             <section
