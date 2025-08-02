@@ -18,6 +18,7 @@ export default function PartGridView() {
     return isLoading ? <Skeleton className="w-full h-full rounded-xl"/> : (
         <article className="h-full overflow-y-scroll">
             {(error && editedInventory != null) && <ErrorText text={error.message}/>}
+            {editedInventory.length == 0 && (<ErrorText isError={false} text="Inventory is empty. Please add a part to continue." />)}
             {editedInventory ? (
                 <section className="grid grid-cols-4 gap-2 overflow-y-auto">
                     {
