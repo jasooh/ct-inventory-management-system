@@ -139,7 +139,7 @@ export default function CreatePartView() {
                             <Input
                                 name="quantity"
                                 type="number"
-                                onChange={e => setQuantity(parseInt(e.target.value))}
+                                onChange={e => setQuantity(parseFloat(e.target.value))}
                                 required
                             />
                         </div>
@@ -150,8 +150,9 @@ export default function CreatePartView() {
                                 <Input
                                     name="price"
                                     type="number"
+                                    step="any"
                                     className="rounded-l-none border-l-0"
-                                    onChange={e => setPrice(parseInt(e.target.value))}
+                                    onChange={e => setPrice(parseFloat(e.target.value))}
                                     required
                                 />
                             </div>

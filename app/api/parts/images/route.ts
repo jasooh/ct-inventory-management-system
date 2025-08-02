@@ -43,7 +43,6 @@ export async function POST(req: Request) {
             ContentType: "image/png"
         })
         uploadUrl = await getSignedUrl(s3, cmd, { expiresIn: 60 })
-        console.log("uploadUrl:", uploadUrl)
     } catch (err) {
         console.error("Failed to generate signed URL:", err)
         return NextResponse.json(

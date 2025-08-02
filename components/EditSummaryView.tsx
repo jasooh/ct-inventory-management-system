@@ -80,7 +80,7 @@ export function EditSummaryView() {
                         </SheetDescription>
                     </SheetHeader>
 
-                    <div className="h-full overflow-y-scroll p-2">
+                    <div className="h-full overflow-y-scroll p-2 flex flex-col gap-2">
                         {canRenderEdits ? (
                             summaryOfPartChanges).map((part) => (
                                 <EditPartRowView
