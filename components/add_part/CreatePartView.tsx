@@ -172,7 +172,7 @@ export default function CreatePartView() {
                             <DialogClose asChild>
                                 <Button variant="outline">Cancel</Button>
                             </DialogClose>
-                            <Button type="submit" className="w-24">
+                            <Button type="submit" className="w-24" disabled={isLoading}>
                                 {isLoading ? <Spinner/> : "Add part"}
                             </Button>
                         </DialogFooter>

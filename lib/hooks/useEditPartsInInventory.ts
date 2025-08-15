@@ -4,10 +4,20 @@
 import {InventoryPart} from "@/app/types/InventoryPart";
 import {APIResponse} from "@/app/types/APIResponse";
 import {useCallback, useState} from "react";
+import {useUser} from "@stackframe/stack";
 
 export function useEditPartsInInventory() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
+
+    // require Stack Auth user on the client before hitting API
+    const user = useUser();
+    const ensureSignedIn = useCallback(() => {
+        if (!user) {
+            setIsLoading(false);
+            throw new Error("You must be signed in to perform this action.");
+        }
+    }, [user]);
 
     /**
      * Mutates the inventory database with the changed items.
@@ -16,6 +26,7 @@ export function useEditPartsInInventory() {
         async (parts: InventoryPart[]): Promise<APIResponse> => {
             setIsLoading(true);
             setError(null);
+            ensureSignedIn();
 
             try {
                 const res = await fetch("/api/parts", {

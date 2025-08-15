@@ -10,8 +10,11 @@ import {conversionTypes, getTimeFromMinutes} from "@/lib/utils";
 import {appConstants} from "@/lib/appConstants";
 
 const rateLimiter = new RateLimiterMemory({
-    points: 3,
-    duration: getTimeFromMinutes(appConstants.CACHE_DEBOUNCE_IN_MINUTES, conversionTypes.toSeconds)
+    points: appConstants.CACHE_CALL_LIMIT as number | undefined,
+    duration: getTimeFromMinutes(
+        appConstants.CACHE_DEBOUNCE_IN_MINUTES,
+        conversionTypes.toSeconds
+    )
 })
 
 export async function GET(){
